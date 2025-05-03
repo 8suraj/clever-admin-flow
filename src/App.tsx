@@ -12,6 +12,9 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./layouts/AdminLayout";
 import Subscriptions from "./pages/Subscriptions";
+import CreateCategory from "./pages/CreateCategory";
+import CreateFeature from "./pages/CreateFeature";
+import CreateProduct from "./pages/CreateProduct";
 
 const queryClient = new QueryClient();
 
@@ -55,10 +58,7 @@ const App = () => {
             {/* Subscription feature routes */}
             <Route path="/subscriptions/features/create" element={
               <AdminLayout>
-                <div className="p-4">
-                  <h1 className="text-2xl font-bold mb-4">Create Feature</h1>
-                  <p className="text-gray-500">Create feature form will be here.</p>
-                </div>
+                <CreateFeature />
               </AdminLayout>
             } />
             
@@ -74,10 +74,7 @@ const App = () => {
             {/* Subscription product routes */}
             <Route path="/subscriptions/products/create" element={
               <AdminLayout>
-                <div className="p-4">
-                  <h1 className="text-2xl font-bold mb-4">Create Product</h1>
-                  <p className="text-gray-500">Create product form will be here.</p>
-                </div>
+                <CreateProduct />
               </AdminLayout>
             } />
             
@@ -93,10 +90,7 @@ const App = () => {
             {/* Subscription category routes */}
             <Route path="/subscriptions/categories/create" element={
               <AdminLayout>
-                <div className="p-4">
-                  <h1 className="text-2xl font-bold mb-4">Create Category</h1>
-                  <p className="text-gray-500">Create category form will be here.</p>
-                </div>
+                <CreateCategory />
               </AdminLayout>
             } />
             
