@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import AdminLayout from "./layouts/AdminLayout";
+import Subscriptions from "./pages/Subscriptions";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,13 @@ const App = () => {
             <Route path="/dashboard" element={
               <AdminLayout>
                 <Dashboard />
+              </AdminLayout>
+            } />
+            
+            {/* Subscriptions page */}
+            <Route path="/subscriptions" element={
+              <AdminLayout>
+                <Subscriptions />
               </AdminLayout>
             } />
             

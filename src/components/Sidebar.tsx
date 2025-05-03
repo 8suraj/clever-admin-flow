@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { LayoutDashboard, Users, Settings, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Settings, ChevronLeft, ChevronRight, LogOut, CreditCard } from "lucide-react";
 
 type SidebarProps = {
   collapsed: boolean;
@@ -28,6 +28,11 @@ const Sidebar = ({ collapsed, setCollapsed }: SidebarProps) => {
       title: "Users",
       icon: Users,
       href: "/users",
+    },
+    {
+      title: "Subscriptions",
+      icon: CreditCard,
+      href: "/subscriptions",
     },
     {
       title: "Settings",
