@@ -11,7 +11,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search } from "lucide-react";
+import { Search, Plus, Edit, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { toast } from "sonner";
 
 interface DataItem {
   id: string;
@@ -24,14 +35,18 @@ interface DataItem {
 interface SubscriptionTableProps {
   data: DataItem[];
   title: string;
+  onCreateClick: () => void;
 }
 
-const SubscriptionTable = ({ data, title }: SubscriptionTableProps) => {
+const ITEMS_PER_PAGE = 3; // Number of items per page
+
+const SubscriptionTable = ({ data, title, onCreateClick }: SubscriptionTableProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortConfig, setSortConfig] = useState<{
     key: keyof DataItem;
     direction: "ascending" | "descending";
   } | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Filter data based on search query
   const filteredData = data.filter((item) =>
@@ -54,6 +69,11 @@ const SubscriptionTable = ({ data, title }: SubscriptionTableProps) => {
     return 0;
   });
 
+  // Calculate pagination
+  const totalPages = Math.ceil(sortedData.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedData = sortedData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
   const handleSort = (key: keyof DataItem) => {
     let direction: "ascending" | "descending" = "ascending";
     if (sortConfig && sortConfig.key === key && sortConfig.direction === "ascending") {
@@ -62,16 +82,52 @@ const SubscriptionTable = ({ data, title }: SubscriptionTableProps) => {
     setSortConfig({ key, direction });
   };
 
+  const handleStatusToggle = (id: string, currentStatus: string) => {
+    const newStatus = currentStatus === "Active" ? "Inactive" : "Active";
+    toast.success(`Status changed to ${newStatus}`);
+    // In a real app, this would update the data via API
+  };
+
+  const handleUpdate = (id: string) => {
+    toast.info(`Update item ${id}`);
+    // In a real app, this would open an edit modal or navigate to edit page
+  };
+
+  const renderPaginationLinks = () => {
+    const links = [];
+    
+    for (let i = 1; i <= totalPages; i++) {
+      links.push(
+        <PaginationItem key={i}>
+          <PaginationLink 
+            onClick={() => setCurrentPage(i)} 
+            isActive={currentPage === i}
+          >
+            {i}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+    
+    return links;
+  };
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center border rounded-md px-3 max-w-sm">
-        <Search className="h-4 w-4 text-muted-foreground mr-2" />
-        <Input 
-          placeholder={`Search ${title}...`} 
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-        />
+      <div className="flex justify-between items-center">
+        <div className="flex items-center border rounded-md px-3 max-w-sm">
+          <Search className="h-4 w-4 text-muted-foreground mr-2" />
+          <Input 
+            placeholder={`Search ${title}...`} 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+          />
+        </div>
+        <Button onClick={onCreateClick}>
+          <Plus className="h-4 w-4 mr-2" />
+          Create {title.slice(0, -1)}
+        </Button>
       </div>
       
       <div className="rounded-md border">
@@ -103,11 +159,12 @@ const SubscriptionTable = ({ data, title }: SubscriptionTableProps) => {
               >
                 Created At {sortConfig?.key === "createdAt" && (sortConfig.direction === "ascending" ? "↑" : "↓")}
               </TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedData.length > 0 ? (
-              sortedData.map((item) => (
+            {paginatedData.length > 0 ? (
+              paginatedData.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">{item.name}</TableCell>
                   <TableCell>{item.description}</TableCell>
@@ -121,11 +178,28 @@ const SubscriptionTable = ({ data, title }: SubscriptionTableProps) => {
                     </span>
                   </TableCell>
                   <TableCell>{new Date(item.createdAt).toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    <div className="flex space-x-2">
+                      <div className="flex items-center space-x-1">
+                        <Switch 
+                          checked={item.status === "Active"} 
+                          onCheckedChange={() => handleStatusToggle(item.id, item.status)}
+                        />
+                        <span className="text-xs text-muted-foreground">
+                          {item.status === "Active" ? "Enabled" : "Disabled"}
+                        </span>
+                      </div>
+                      <Button size="sm" variant="outline" onClick={() => handleUpdate(item.id)}>
+                        <Edit className="h-3 w-3 mr-1" />
+                        Update
+                      </Button>
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} className="h-24 text-center">
+                <TableCell colSpan={5} className="h-24 text-center">
                   No results found.
                 </TableCell>
               </TableRow>
@@ -133,6 +207,28 @@ const SubscriptionTable = ({ data, title }: SubscriptionTableProps) => {
           </TableBody>
         </Table>
       </div>
+      
+      {totalPages > 1 && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+              />
+            </PaginationItem>
+            
+            {renderPaginationLinks()}
+            
+            <PaginationItem>
+              <PaginationNext 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 };
@@ -163,6 +259,19 @@ const categoriesData: DataItem[] = [
 ];
 
 const Subscriptions = () => {
+  // Handlers for create buttons
+  const handleCreateFeature = () => {
+    toast.success("Create feature modal would open here");
+  };
+
+  const handleCreateProduct = () => {
+    toast.success("Create product modal would open here");
+  };
+
+  const handleCreateCategory = () => {
+    toast.success("Create category modal would open here");
+  };
+
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div>
@@ -177,13 +286,25 @@ const Subscriptions = () => {
           <TabsTrigger value="categories">Categories</TabsTrigger>
         </TabsList>
         <TabsContent value="features" className="space-y-4">
-          <SubscriptionTable data={featuresData} title="Features" />
+          <SubscriptionTable 
+            data={featuresData} 
+            title="Features" 
+            onCreateClick={handleCreateFeature} 
+          />
         </TabsContent>
         <TabsContent value="products" className="space-y-4">
-          <SubscriptionTable data={productsData} title="Products" />
+          <SubscriptionTable 
+            data={productsData} 
+            title="Products" 
+            onCreateClick={handleCreateProduct} 
+          />
         </TabsContent>
         <TabsContent value="categories" className="space-y-4">
-          <SubscriptionTable data={categoriesData} title="Categories" />
+          <SubscriptionTable 
+            data={categoriesData} 
+            title="Categories" 
+            onCreateClick={handleCreateCategory} 
+          />
         </TabsContent>
       </Tabs>
     </div>
