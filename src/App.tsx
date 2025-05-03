@@ -45,10 +45,67 @@ const App = () => {
               </AdminLayout>
             } />
             
-            {/* Subscriptions page */}
+            {/* Subscriptions pages */}
             <Route path="/subscriptions" element={
               <AdminLayout>
                 <Subscriptions />
+              </AdminLayout>
+            } />
+            
+            {/* Subscription feature routes */}
+            <Route path="/subscriptions/features/create" element={
+              <AdminLayout>
+                <div className="p-4">
+                  <h1 className="text-2xl font-bold mb-4">Create Feature</h1>
+                  <p className="text-gray-500">Create feature form will be here.</p>
+                </div>
+              </AdminLayout>
+            } />
+            
+            <Route path="/subscriptions/features/update/:id" element={
+              <AdminLayout>
+                <div className="p-4">
+                  <h1 className="text-2xl font-bold mb-4">Update Feature</h1>
+                  <p className="text-gray-500">Update feature form will be here.</p>
+                </div>
+              </AdminLayout>
+            } />
+            
+            {/* Subscription product routes */}
+            <Route path="/subscriptions/products/create" element={
+              <AdminLayout>
+                <div className="p-4">
+                  <h1 className="text-2xl font-bold mb-4">Create Product</h1>
+                  <p className="text-gray-500">Create product form will be here.</p>
+                </div>
+              </AdminLayout>
+            } />
+            
+            <Route path="/subscriptions/products/update/:id" element={
+              <AdminLayout>
+                <div className="p-4">
+                  <h1 className="text-2xl font-bold mb-4">Update Product</h1>
+                  <p className="text-gray-500">Update product form will be here.</p>
+                </div>
+              </AdminLayout>
+            } />
+            
+            {/* Subscription category routes */}
+            <Route path="/subscriptions/categories/create" element={
+              <AdminLayout>
+                <div className="p-4">
+                  <h1 className="text-2xl font-bold mb-4">Create Category</h1>
+                  <p className="text-gray-500">Create category form will be here.</p>
+                </div>
+              </AdminLayout>
+            } />
+            
+            <Route path="/subscriptions/categories/update/:id" element={
+              <AdminLayout>
+                <div className="p-4">
+                  <h1 className="text-2xl font-bold mb-4">Update Category</h1>
+                  <p className="text-gray-500">Update category form will be here.</p>
+                </div>
               </AdminLayout>
             } />
             

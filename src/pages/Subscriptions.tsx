@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -11,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, Plus, Edit, RefreshCw } from "lucide-react";
+import { Search, Plus, Edit, RefreshCw, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -36,11 +37,19 @@ interface SubscriptionTableProps {
   data: DataItem[];
   title: string;
   onCreateClick: () => void;
+  onUpdateClick: (id: string) => void;
+  showPriceButtons?: boolean;
 }
 
 const ITEMS_PER_PAGE = 3; // Number of items per page
 
-const SubscriptionTable = ({ data, title, onCreateClick }: SubscriptionTableProps) => {
+const SubscriptionTable = ({ 
+  data, 
+  title, 
+  onCreateClick, 
+  onUpdateClick, 
+  showPriceButtons = false 
+}: SubscriptionTableProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortConfig, setSortConfig] = useState<{
     key: keyof DataItem;
@@ -88,9 +97,14 @@ const SubscriptionTable = ({ data, title, onCreateClick }: SubscriptionTableProp
     // In a real app, this would update the data via API
   };
 
-  const handleUpdate = (id: string) => {
-    toast.info(`Update item ${id}`);
-    // In a real app, this would open an edit modal or navigate to edit page
+  const handleAddPrice = (id: string) => {
+    toast.info(`Add price for item ${id}`);
+    // In a real app, this would navigate to the add price page
+  };
+
+  const handleUpdatePrice = (id: string) => {
+    toast.info(`Update price for item ${id}`);
+    // In a real app, this would navigate to the update price page
   };
 
   const renderPaginationLinks = () => {
@@ -179,7 +193,7 @@ const SubscriptionTable = ({ data, title, onCreateClick }: SubscriptionTableProp
                   </TableCell>
                   <TableCell>{new Date(item.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>
-                    <div className="flex space-x-2">
+                    <div className="flex flex-col space-y-2">
                       <div className="flex items-center space-x-1">
                         <Switch 
                           checked={item.status === "Active"} 
@@ -189,10 +203,25 @@ const SubscriptionTable = ({ data, title, onCreateClick }: SubscriptionTableProp
                           {item.status === "Active" ? "Enabled" : "Disabled"}
                         </span>
                       </div>
-                      <Button size="sm" variant="outline" onClick={() => handleUpdate(item.id)}>
-                        <Edit className="h-3 w-3 mr-1" />
-                        Update
-                      </Button>
+                      <div className="flex space-x-2">
+                        <Button size="sm" variant="outline" onClick={() => onUpdateClick(item.id)}>
+                          <Edit className="h-3 w-3 mr-1" />
+                          Update
+                        </Button>
+                        
+                        {showPriceButtons && (
+                          <>
+                            <Button size="sm" variant="outline" onClick={() => handleAddPrice(item.id)}>
+                              <DollarSign className="h-3 w-3 mr-1" />
+                              Add Price
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => handleUpdatePrice(item.id)}>
+                              <DollarSign className="h-3 w-3 mr-1" />
+                              Update Price
+                            </Button>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </TableCell>
                 </TableRow>
@@ -259,17 +288,31 @@ const categoriesData: DataItem[] = [
 ];
 
 const Subscriptions = () => {
+  const navigate = useNavigate();
+  
   // Handlers for create buttons
   const handleCreateFeature = () => {
-    toast.success("Create feature modal would open here");
+    navigate("/subscriptions/features/create");
+  };
+
+  const handleUpdateFeature = (id: string) => {
+    navigate(`/subscriptions/features/update/${id}`);
   };
 
   const handleCreateProduct = () => {
-    toast.success("Create product modal would open here");
+    navigate("/subscriptions/products/create");
+  };
+
+  const handleUpdateProduct = (id: string) => {
+    navigate(`/subscriptions/products/update/${id}`);
   };
 
   const handleCreateCategory = () => {
-    toast.success("Create category modal would open here");
+    navigate("/subscriptions/categories/create");
+  };
+
+  const handleUpdateCategory = (id: string) => {
+    navigate(`/subscriptions/categories/update/${id}`);
   };
 
   return (
@@ -289,21 +332,25 @@ const Subscriptions = () => {
           <SubscriptionTable 
             data={featuresData} 
             title="Features" 
-            onCreateClick={handleCreateFeature} 
+            onCreateClick={handleCreateFeature}
+            onUpdateClick={handleUpdateFeature}
           />
         </TabsContent>
         <TabsContent value="products" className="space-y-4">
           <SubscriptionTable 
             data={productsData} 
             title="Products" 
-            onCreateClick={handleCreateProduct} 
+            onCreateClick={handleCreateProduct}
+            onUpdateClick={handleUpdateProduct}
+            showPriceButtons={true}
           />
         </TabsContent>
         <TabsContent value="categories" className="space-y-4">
           <SubscriptionTable 
             data={categoriesData} 
             title="Categories" 
-            onCreateClick={handleCreateCategory} 
+            onCreateClick={handleCreateCategory}
+            onUpdateClick={handleUpdateCategory}
           />
         </TabsContent>
       </Tabs>
