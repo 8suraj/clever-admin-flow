@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { AreaChart } from "@/components/ui/chart";
+import { AreaChart } from "@/components/charts/AreaChart";
 import { Users, ArrowUp, ArrowDown, CreditCard, Activity } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
