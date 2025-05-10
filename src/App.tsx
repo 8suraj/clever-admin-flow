@@ -15,6 +15,7 @@ import Subscriptions from "./pages/Subscriptions";
 import CreateCategory from "./pages/CreateCategory";
 import CreateFeature from "./pages/CreateFeature";
 import CreateProduct from "./pages/CreateProduct";
+import CreateFeatureMap from "./pages/CreateFeatureMap";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,13 @@ const App = () => {
                   <h1 className="text-2xl font-bold mb-4">Update Feature</h1>
                   <p className="text-gray-500">Update feature form will be here.</p>
                 </div>
+              </AdminLayout>
+            } />
+            
+            {/* Feature map routes */}
+            <Route path="/subscriptions/feature-maps/create" element={
+              <AdminLayout>
+                <CreateFeatureMap />
               </AdminLayout>
             } />
             
